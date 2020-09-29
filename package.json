@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Face Expression Recognition",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "face-api.js": "^0.22.2"
+  },
   "devDependencies": {
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
