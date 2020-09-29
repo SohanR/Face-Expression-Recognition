@@ -1,15 +1,15 @@
-//jshint esversion:6
+//jshint esversion:8
 
 const video = document.getElementById("video");
 
 Promise.all([
-  faceapi.nets.tinyFaceDetector.loadFromUrl("./models"),
-  faceapi.nets.faceLandmar68Net.loadFromUrl("./models"),
-  faceapi.nets.faceRecognitionNet.loadFromUrl("./models"),
-  faceapi.nets.faceExpressionNet.loadFromUrl("./models"),
+  faceapi.loadFaceLandmarkTinyModel("/models"),
+  faceapi.loadFaceLandmarkModel("/models"),
+  faceapi.loadFaceRecognitionModel("/models"),
+  faceapi.loadFaceExpressionModel("/models"),
 ]).then(startVideo);
 
-//get access to webcam and stream video to browser
+// get access to webcam and stream video to browser
 function startVideo() {
   navigator.mediaDevices
     .getUserMedia({ video: {} })
@@ -18,3 +18,14 @@ function startVideo() {
 }
 
 startVideo();
+
+//event listenrs for video
+video.addEventListener("playing", () => {
+  setInterval(async () => {
+    const detections = await faceapi
+      .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceExpressions();
+    console.log(detections);
+  }, 10000);
+});
