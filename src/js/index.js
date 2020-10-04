@@ -3,10 +3,10 @@
 const video = document.getElementById("video");
 
 Promise.all([
-  faceapi.loadFaceLandmarkTinyModel("/models"),
-  faceapi.loadFaceLandmarkModel("/models"),
-  faceapi.loadFaceRecognitionModel("/models"),
-  faceapi.loadFaceExpressionModel("/models"),
+  faceapi.nets.tinyFaceDetector.loadFromUri("./../../models"),
+  faceapi.nets.faceLandmark68Net.loadFromUri("./../../models"),
+  faceapi.nets.faceRecognitionNet.loadFromUri("./../../models"),
+  faceapi.nets.faceExpressionNet.loadFromUri("./../../models"),
 ]).then(startVideo);
 
 // get access to webcam and stream video to browser
@@ -21,11 +21,28 @@ startVideo();
 
 //event listenrs for video
 video.addEventListener("playing", () => {
+  //creating canvas
+  const canvas = faceapi.createCanvasFromMedia(video);
+  document.body.append(canvas);
+  const displaySize = {
+    width: video.width,
+    height: video.height,
+  };
+  faceapi.matchDimensions(canvas, displaySize);
+
+  //deecting face
   setInterval(async () => {
     const detections = await faceapi
       .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
       .withFaceLandmarks()
       .withFaceExpressions();
     console.log(detections);
-  }, 10000);
+
+    //resizing detection size
+    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+    //drawing detection on canvas
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    faceapi.draw.drawDetections(canvas, resizedDetections);
+  }, 100);
 });
