@@ -13,4 +13,8 @@ body {
           align-items: center;
   justify-self: center;
 }
+
+body canvas {
+  position: absolute;
+}
 /*# sourceMappingURL=style.css.map */

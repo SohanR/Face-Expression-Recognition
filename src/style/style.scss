@@ -6,4 +6,8 @@ body {
   justify-content: center;
   align-items: center;
   justify-self: center;
+
+  canvas {
+    position: absolute;
+  }
 }
